@@ -18,8 +18,9 @@ public class RunTSP_Solver {
     public static void main(String[] args) throws IOException {
         // 读取tsp数据
         TSP_Instance tspInstance = TSP_Util.readTSP_Instance("data/tsp/att48.tsp");
-        // 测试不同启发式算法
+        // 固定使用随机数种子
+        Long seed = 2023L;
         System.out.println("------------------------- 模拟退火算法求解TSP问题 -----------------------------");
-        new TSP_Solver_SA().solve(tspInstance);
+        new TSP_Solver_SA(seed, 0.1, 1.1, 0.9, 5000, 100, 10).solve(tspInstance);
     }
 }

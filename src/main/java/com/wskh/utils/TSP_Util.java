@@ -3,7 +3,6 @@ package com.wskh.utils;
 import com.wskh.classes.tsp.TSP_Instance;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -42,9 +41,20 @@ public class TSP_Util {
         return tspInstance;
     }
 
-    // 计算两点之间的欧式距离
-    public static double calcDistance(double p1x, double p1y, double p2x, double p2y) {
-        return Math.sqrt(Math.pow(p1x - p2x, 2) + Math.pow(p1y - p2y, 2));
+    // 计算两点之间的取整的伪欧式距离
+    public static double calcDistance(double[] p1, double[] p2) {
+        return Math.round(Math.sqrt((Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2)) / 10d));
+    }
+
+    // 评价函数，传入一个路径和距离矩阵，返回该路径的长度
+    public static double calcPathLen(int[] path, double[][] distances) {
+        double pathLen = 0d;
+        for (int i = 0; i < path.length - 1; i++) {
+            pathLen += distances[path[i]][path[i + 1]];
+        }
+        // 还要算上从最后一个城市回到起始城市的距离
+        pathLen += distances[path[path.length - 1]][path[0]];
+        return pathLen;
     }
 
 }
