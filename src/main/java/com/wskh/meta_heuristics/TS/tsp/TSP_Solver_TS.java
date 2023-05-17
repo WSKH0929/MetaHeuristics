@@ -1,47 +1,40 @@
-package com.wskh.meta_heuristics.simulated_annealing.tsp;
+package com.wskh.meta_heuristics.TS.tsp;
 
 import com.wskh.classes.tsp.TSP_Instance;
 import com.wskh.classes.tsp.TSP_Solution;
 import com.wskh.utils.TSP_Util;
 import lombok.Data;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Random;
 
 /**
  * @Author：WSKH
- * @ClassName：TSP_Solver_SA
+ * @ClassName：TSP_Solver_TS
  * @Description：
- * @Time：2023/5/13/22:21
+ * @Time：2023/5/17/9:38
  * @Email：1187560563@qq.com
  * @Blog：wskh0929.blog.csdn.net
  */
 @Data
-public class TSP_Solver_SA {
-
+public class TSP_Solver_TS {
     // 随机数种子
     Long seed;
-    // 初始温度 一般设置为一个大于0但是很接近0的数
-    double c0 = 0.1;
-    // 预热升温系数：一定要大于 1
-    double alphaHeatingUp = 1.1;
-    // 冷却降温系数：一般取 0.8 ~ 0.99
-    double alphaCooling = 0.9;
+    // 禁忌长度
+    int tabuLen = 30;
     // 迭代次数
-    int epochs = 5000;
-    // 最大链长
-    int maxChainLen = 100;
-    // 最小链长
-    int minChainLen = 10;
+    int epochs = 50000;
+    // 局部搜索次数
+    int localSearchCnt = 100;
 
     // 构造函数
-    public TSP_Solver_SA(Long seed, double c0, double alphaHeatingUp, double alphaCooling, int epochs, int maxChainLen, int minChainLen) {
+    public TSP_Solver_TS(Long seed, int tabuLen, int epochs, int localSearchCnt) {
         this.seed = seed;
-        this.c0 = c0;
-        this.alphaHeatingUp = alphaHeatingUp;
-        this.alphaCooling = alphaCooling;
+        this.tabuLen = tabuLen;
         this.epochs = epochs;
-        this.maxChainLen = maxChainLen;
-        this.minChainLen = minChainLen;
+        this.localSearchCnt = localSearchCnt;
     }
 
     // 城市数量
@@ -50,14 +43,14 @@ public class TSP_Solver_SA {
     double[][] locations;
     // 距离矩阵
     double[][] distances;
+    // 禁忌表（存储序列的哈希值）
+    LinkedList<Integer> tabuList;
     // 随机数生成对象
     Random random;
     // 当前解
     TSP_Solution curSolution;
     // 最优解
     TSP_Solution bestSolution;
-    // 当前温度
-    double c;
 
     // 求解函数
     public TSP_Solution solve(TSP_Instance tspInstance) {
@@ -65,56 +58,66 @@ public class TSP_Solver_SA {
         // 初始化操作
         init(tspInstance);
         System.out.println("城市数量为: " + n);
-        System.out.println("初始解为: " + curSolution);
-        // 模拟退火过程
-        // 1. 预热过程
-        preheatingProcess();
-        System.out.println("预热过程找到的最优解为: " + bestSolution);
-        // 2. 冷却过程
-        coolingProcess();
+        System.out.println("初始解为: " + bestSolution);
+        // 禁忌搜索过程
+        for (int i = 0; i < epochs; i++) {
+            // 在当前解进行邻域搜索，获得最佳邻域解
+            Object[] localSearchResult = localSearch();
+            int localBestHashValue = (int) localSearchResult[0];
+            TSP_Solution localBestSolution = (TSP_Solution) localSearchResult[1];
+            // 最佳邻域解不为null时，进行位置更新
+            if (localBestSolution != null) {
+                // 更新当前解
+                curSolution = localBestSolution;
+                // 更新禁忌表
+                putInTabuList(localBestHashValue);
+                // 更新全局最优解
+                if (curSolution.getPathLen() < bestSolution.getPathLen()) {
+                    bestSolution = curSolution;
+                }
+            }
+        }
         // 输出结果
         System.out.println("最终找到的最优解为: " + bestSolution);
         System.out.println("求解用时: " + (System.currentTimeMillis() - startTime) / 1000d + " s");
         return bestSolution;
     }
 
-    // 预热过程
-    private void preheatingProcess() {
-        double acceptRate = 0d;
-        // 预热，直到当前温度下的接受率接近 1
-        while (1 - acceptRate > 1e-04) {
-            acceptRate = localSearch(maxChainLen);
-            c *= alphaHeatingUp;
-        }
-    }
-
-    // 冷却过程
-    private void coolingProcess() {
-        for (int k = 0; k < epochs; k++) {
-            // 计算当前链长
-            double a = (double) k / epochs;
-            int curChainLen = (int) Math.round(a * minChainLen + (1 - a) * maxChainLen);
-            localSearch(curChainLen);
-            c *= alphaCooling;
-        }
-    }
-
-    // 局部搜索过程，给定链长，返回接受率
-    private double localSearch(int chainLen) {
-        double acceptCnt = 0d;
-        for (int i = 0; i < chainLen; i++) {
+    // 在当前解进行邻域搜索，获得最佳邻域解
+    private Object[] localSearch() {
+        TSP_Solution localBestSolution = null;
+        int localBestHashValue = -1;
+        for (int j = 0; j < localSearchCnt; j++) {
             // 随机使用两个邻域算子构造新解
             int[] newPath = random.nextInt(2) == 0 ? neighborhoodOperator1(curSolution.getPath()) : neighborhoodOperator2(curSolution.getPath());
-            double newPathLen = TSP_Util.calcPathLen(newPath, distances);
-            if (newPathLen < curSolution.getPathLen() || random.nextDouble() <= Math.exp((curSolution.getPathLen() - newPathLen) / c)) {
-                curSolution = new TSP_Solution(newPathLen, newPath);
-                if (newPathLen < bestSolution.getPathLen()) {
-                    bestSolution = curSolution.copy();
+            int newHashValue = Arrays.hashCode(newPath);
+            if (!isInTabuList(newHashValue)) {
+                double newPathLen = TSP_Util.calcPathLen(newPath, distances);
+                if (localBestSolution == null || newPathLen < localBestSolution.getPathLen()) {
+                    localBestSolution = new TSP_Solution(newPathLen, newPath);
+                    localBestHashValue = newHashValue;
                 }
-                acceptCnt++;
             }
         }
-        return acceptCnt / chainLen;
+        return new Object[]{localBestHashValue, localBestSolution};
+    }
+
+    // 将解向量X的hash值加入禁忌表
+    private void putInTabuList(int hashValue) {
+        if (tabuList.size() == tabuLen) {
+            tabuList.removeFirst();
+        }
+        tabuList.add(hashValue);
+    }
+
+    // 判断解向量X的hash值是否在禁忌表中
+    private boolean isInTabuList(int hashValue) {
+        for (int tabuHashValue : tabuList) {
+            if (tabuHashValue == hashValue) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // 邻域算子1：在当前解向量 X 中随机交换两个位置
@@ -162,7 +165,7 @@ public class TSP_Solver_SA {
 
     // 初始化操作
     private void init(TSP_Instance tspInstance) {
-        c = c0;
+        tabuList = new LinkedList<>();
         n = tspInstance.getN();
         locations = tspInstance.getLocations();
         random = seed == null ? new Random() : new Random(seed);

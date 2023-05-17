@@ -1,7 +1,8 @@
 package com.wskh.run;
 
 import com.wskh.classes.tsp.TSP_Instance;
-import com.wskh.meta_heuristics.simulated_annealing.tsp.TSP_Solver_SA;
+import com.wskh.meta_heuristics.SA.tsp.TSP_Solver_SA;
+import com.wskh.meta_heuristics.TS.tsp.TSP_Solver_TS;
 import com.wskh.utils.TSP_Util;
 
 import java.io.IOException;
@@ -22,5 +23,7 @@ public class RunTSP_Solver {
         Long seed = 2023L;
         System.out.println("------------------------- 模拟退火算法求解TSP问题 -----------------------------");
         new TSP_Solver_SA(seed, 0.1, 1.1, 0.9, 5000, 100, 10).solve(tspInstance);
+        System.out.println("------------------------- 禁忌搜索算法求解TSP问题 -----------------------------");
+        new TSP_Solver_TS(seed, 30, 5000, 200).solve(tspInstance);
     }
 }

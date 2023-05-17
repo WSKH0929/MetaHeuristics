@@ -43,7 +43,7 @@ public class TSP_Util {
 
     // 计算两点之间的取整的伪欧式距离
     public static double calcDistance(double[] p1, double[] p2) {
-        return Math.round(Math.sqrt((Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2)) / 10d));
+        return Math.ceil(Math.sqrt((Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2)) / 10d));
     }
 
     // 评价函数，传入一个路径和距离矩阵，返回该路径的长度
