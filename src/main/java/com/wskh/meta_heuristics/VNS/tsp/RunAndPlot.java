@@ -57,7 +57,7 @@ public class RunAndPlot extends javafx.application.Application {
         // 固定使用随机数种子
         Long seed = 2023L;
         System.out.println("------------------------- 变邻域搜索算法求解TSP问题 -----------------------------");
-        TSP_Solution solution = new TSP_Solver_VNS(seed, 30, 50000, 100).solve(tspInstance);
+        TSP_Solution solution = new TSP_Solver_VNS(seed, 2, 2, 20000, 40).solve(tspInstance);
 
         // 获取最佳路径
         int[] bestPath = solution.getPath().clone();

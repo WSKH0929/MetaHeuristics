@@ -5,9 +5,7 @@ import com.wskh.classes.tsp.TSP_Solution;
 import com.wskh.utils.TSP_Util;
 import lombok.Data;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Random;
+import java.util.*;
 
 /**
  * @Author：WSKH
@@ -22,12 +20,19 @@ public class TSP_Solver_VNS {
     // 随机数种子
     Long seed;
     // 迭代次数
-    int epochs = 50000;
+    int epochs = 20000;
+    // 局部搜索次数
+    int localSearchCnt = 30;
+    // VND参数
+    int lMax = 2;
+    // VNS参数
+    int kMax = 2;
 
     // 构造函数
-    public TSP_Solver_VNS(Long seed, int tabuLen, int epochs, int localSearchCnt) {
+    public TSP_Solver_VNS(Long seed, int lMax, int kMax, int epochs, int localSearchCnt) {
         this.seed = seed;
-        this.tabuLen = tabuLen;
+        this.lMax = lMax;
+        this.kMax = kMax;
         this.epochs = epochs;
         this.localSearchCnt = localSearchCnt;
     }
@@ -53,11 +58,89 @@ public class TSP_Solver_VNS {
         System.out.println("城市数量为: " + n);
         System.out.println("初始解为: " + bestSolution);
         // 变邻域搜索过程
-
+        variableNeighborhoodSearch();
         // 输出结果
         System.out.println("最终找到的最优解为: " + bestSolution);
         System.out.println("求解用时: " + (System.currentTimeMillis() - startTime) / 1000d + " s");
         return bestSolution;
+    }
+
+    // 变邻域搜索过程
+    public void variableNeighborhoodSearch() {
+        for (int epoch = 0; epoch < epochs; epoch++) {
+            int k = 1;
+            while (k <= kMax) {
+                // 震动过程（序列反转）
+                TSP_Solution solution1 = shake(curSolution, k);
+                // VND过程
+                TSP_Solution solution2 = variableNeighborhoodDescent(solution1.copy());
+                // 邻域切换过程
+                if (solution2.getPathLen() < curSolution.getPathLen()) {
+                    curSolution = solution2;
+                    k = 1;
+                    if (curSolution.getPathLen() < bestSolution.getPathLen()) {
+                        bestSolution = curSolution.copy();
+                    }
+                } else {
+                    k++;
+                }
+            }
+        }
+    }
+
+    // VND过程
+    public TSP_Solution variableNeighborhoodDescent(TSP_Solution solution) {
+        int k = 1;
+        while (k <= lMax) {
+            TSP_Solution localBestSolution = solution.copy();
+            // 局部搜索过程，搜索邻域k中的较优解
+            for (int i = 0; i < localSearchCnt; i++) {
+                int[] newX = null;
+                if (k == 1) {
+                    newX = neighborhoodOperator1(solution.getPath());
+                } else if (k == 2) {
+                    newX = neighborhoodOperator2(solution.getPath());
+                } else {
+                    throw new RuntimeException("超出neighborhood邻域集合长度: " + k);
+                }
+                double pathLen = TSP_Util.calcPathLen(newX, distances);
+                if (pathLen < localBestSolution.getPathLen()) {
+                    localBestSolution = new TSP_Solution(pathLen, newX);
+                }
+            }
+            // 邻域切换过程
+            if (localBestSolution.getPathLen() < solution.getPathLen()) {
+                solution = localBestSolution;
+                k = 1;
+            } else {
+                k++;
+            }
+        }
+        return solution;
+    }
+
+    // 震动过程
+    public TSP_Solution shake(TSP_Solution solution, int k) {
+        int[] newX = null;
+        if (k == 1) {
+            newX = shakeOperator1(solution.getPath());
+        } else if (k == 2) {
+            newX = shakeOperator2(solution.getPath());
+        } else {
+            throw new RuntimeException("超出shake邻域集合长度: " + k);
+        }
+        double pathLen = TSP_Util.calcPathLen(newX, distances);
+        return new TSP_Solution(pathLen, newX);
+    }
+
+    // 震动算子1
+    private int[] shakeOperator1(int[] X) {
+        return neighborhoodOperator1(X);
+    }
+
+    // 震动算子2
+    private int[] shakeOperator2(int[] X) {
+        return neighborhoodOperator2(X);
     }
 
     // 邻域算子1：在当前解向量 X 中随机交换两个位置
@@ -105,7 +188,6 @@ public class TSP_Solver_VNS {
 
     // 初始化操作
     private void init(TSP_Instance tspInstance) {
-        tabuList = new LinkedList<>();
         n = tspInstance.getN();
         locations = tspInstance.getLocations();
         random = seed == null ? new Random() : new Random(seed);
