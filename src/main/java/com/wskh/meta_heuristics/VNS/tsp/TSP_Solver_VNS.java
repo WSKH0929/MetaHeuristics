@@ -70,7 +70,7 @@ public class TSP_Solver_VNS {
         for (int epoch = 0; epoch < epochs; epoch++) {
             int k = 1;
             while (k <= kMax) {
-                // 震动过程（序列反转）
+                // 震动过程
                 TSP_Solution solution1 = shake(curSolution, k);
                 // VND过程
                 TSP_Solution solution2 = variableNeighborhoodDescent(solution1.copy());
