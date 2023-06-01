@@ -12,8 +12,8 @@
 
 - 未完待续...
 
-如果我的代码对你有帮助的话，希望可以给我点一个Star~，大家的支持就是我持续创作的动力！
+如果我的代码对你有帮助的话，**希望可以给我点一个Star**~，大家的支持就是我持续创作的动力❤️❤️❤️！
 
 另外，如果代码方面运行有BUG，或者有疑问的话，可以扫描下方二维码加我微信进行反馈：
 
-![image-20230601165532094](https://picgo-wskh.oss-cn-guangzhou.aliyuncs.com/image-20230601165532094.png)
+<img src="https://picgo-wskh.oss-cn-guangzhou.aliyuncs.com/image-20230601165532094.png" alt="image-20230601165532094" style="zoom:25%;" />
