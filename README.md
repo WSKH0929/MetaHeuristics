@@ -1,6 +1,15 @@
 # MetaHeuristics
 
+> 我的博客：[WSKH0929的博客_CSDN博客-人工智能,运筹优化,编程语言领域博主](https://blog.csdn.net/weixin_51545953?spm=1010.2135.3001.5343)
+
 本项目旨在为大家提供常用的元启发式算法的代码实现，并用在求解实践问题上。
+
+目前已有的内容包括：
+
+- 元启发式算法求解TSP问题：
+  - [【运筹优化】SA模拟退火算法求解TSP问题 + Java代码实现](https://blog.csdn.net/weixin_51545953/article/details/125140551?spm=1001.2014.3001.5501)
+  - [【运筹优化】TS禁忌搜索算法求解TSP问题 + Java代码实现](https://blog.csdn.net/weixin_51545953/article/details/119133540?spm=1001.2014.3001.5501)
+  - [【运筹优化】VNS变邻域搜索算法求解TSP问题 + Java代码实现](https://blog.csdn.net/weixin_51545953/article/details/125144883?spm=1001.2014.3001.5501)
 
 相关元启发式算法的讲解链接如下：
 
