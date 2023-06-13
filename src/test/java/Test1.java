@@ -8,7 +8,7 @@ import java.util.Arrays;
  * @Email：1187560563@qq.com
  * @Blog：wskh0929.blog.csdn.net
  */
-public class Test {
+public class Test1 {
     public static void main(String[] args) {
         int[] arr = {0, 1, 2, 3, 4, 5, 6, 7};
         System.out.println(Arrays.toString(arr));
