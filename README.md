@@ -10,6 +10,7 @@
   - [【运筹优化】SA模拟退火算法求解TSP问题 + Java代码实现](https://blog.csdn.net/weixin_51545953/article/details/125140551?spm=1001.2014.3001.5501)
   - [【运筹优化】TS禁忌搜索算法求解TSP问题 + Java代码实现](https://blog.csdn.net/weixin_51545953/article/details/119133540?spm=1001.2014.3001.5501)
   - [【运筹优化】VNS变邻域搜索算法求解TSP问题 + Java代码实现](https://blog.csdn.net/weixin_51545953/article/details/125144883?spm=1001.2014.3001.5501)
+  - [【运筹优化】ALNS自适应大领域搜索算法求解TSP问题 + Java代码实现](https://blog.csdn.net/weixin_51545953/article/details/131189088?spm=1001.2014.3001.5501)
 
 相关元启发式算法的讲解链接如下：
 
@@ -18,6 +19,8 @@
 - [【运筹优化】元启发式算法详解：禁忌搜索算法（Tabu Search，TS）+ 案例讲解&代码实战](https://blog.csdn.net/weixin_51545953/article/details/130667889?spm=1001.2014.3001.5501)
 
 - [【运筹优化】元启发式算法详解：变邻域搜索算法（Variable Neighborhood Search，VNS）+ 案例讲解&代码实现](https://blog.csdn.net/weixin_51545953/article/details/130982728?spm=1001.2014.3001.5501)
+
+- [【运筹优化】元启发式算法详解：(自适应)大邻域搜索算法（( Adaptive) Large Neighborhood Search，(A)LNS）+ 案例讲解&代码实现](https://blog.csdn.net/weixin_51545953/article/details/131176286?spm=1001.2014.3001.5501)
 
 - 未完待续...
 
