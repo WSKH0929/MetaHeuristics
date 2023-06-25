@@ -1,8 +1,8 @@
 package com.wskh.run;
 
 import com.wskh.classes.tsp.TSP_Instance;
-import com.wskh.classes.tsp.TSP_Solution;
 import com.wskh.meta_heuristics.ALNS.tsp.TSP_Solver_ALNS;
+import com.wskh.meta_heuristics.ILS.tsp.TSP_Solver_ILS;
 import com.wskh.meta_heuristics.SA.tsp.TSP_Solver_SA;
 import com.wskh.meta_heuristics.TS.tsp.TSP_Solver_TS;
 import com.wskh.meta_heuristics.VNS.tsp.TSP_Solver_VNS;
@@ -31,6 +31,8 @@ public class RunTSP_Solver {
         System.out.println("------------------------- 变邻域搜索算法求解TSP问题 -----------------------------");
         new TSP_Solver_VNS(seed, 2, 2, 20000, 40).solve(tspInstance);
         System.out.println("------------------------- 自适应大邻域搜索算法求解TSP问题 -----------------------------");
-        new TSP_Solver_ALNS(seed, 0.6,1.5, 1.2, 0.8, 0.1, 100000, 100).solve(tspInstance);
+        new TSP_Solver_ALNS(seed, 0.6, 1.5, 1.2, 0.8, 0.1, 100000, 100).solve(tspInstance);
+        System.out.println("------------------------- 迭代局部搜索算法求解TSP问题 -----------------------------");
+        new TSP_Solver_ILS(seed, 40000, 100, 6).solve(tspInstance);
     }
 }
